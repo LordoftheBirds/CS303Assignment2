@@ -15,11 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Employee.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="SingleLinkedList.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Professional.h">
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </ClInclude>
+    </ClCompile>
   </ItemGroup>
 </Project>
