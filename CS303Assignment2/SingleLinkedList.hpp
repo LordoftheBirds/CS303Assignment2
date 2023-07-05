@@ -19,17 +19,77 @@ private:
 
 public:
 	SingleLinkedList();
+
+	/*
+	* A function which takes an item, creates a new node containing it, 
+		and adds it to the front of the list
+
+	* @param item - Item_Type item to used in the new node creation
+	*/
 	void pushFront(Item_Type item);
+
+	/*
+	* A function which takes an item, creates a new node containing it,
+		and adds it to the back of the list
+
+	* @param item - Item_Type item to used in the new node creation
+	*/
 	void pushBack(Item_Type item);
+
+	/*
+	* Deletes the current node at the front of the list, and sets the node following it as the new head
+	*/
 	Item_Type popFront();
+
+	/*
+	* Deletes the current node at the front of the list, and sets the node following it as the new tail
+	*/
 	Item_Type popBack();
+
+	/*
+	* Returns the item in the data private data member from the head node
+	*/
 	Item_Type front();
+
+	/*
+	* Returns the item in the data private data member from the tail node
+	*/
 	Item_Type back();
+
+	/*
+	* Returns true if the list is empty, false if not
+	*/
 	bool isEmpty();
+
+	/*
+	* Creates a new node containing item, and places it in the queue at the correct position, index.
+	* 
+	* @param index - The location to add the new node in the list. Index counting starts at 0
+	* @param item - The Item_Type item used in the creation of the new node
+	*/
 	void insert(size_t index, const Item_Type& item);
+
+	/*
+	* Removes the node from the list at the inputed location, index.
+	* 
+	* @param index - The location of the list where to remove the node from.
+	* 
+	* return - True if node was able to be deleted, false otherwise.
+	*/
 	bool remove(size_t index);
+
+	/*
+	* Finds the first node containing the passed in item and returns its location.
+	* 
+	* @param item - the data that is attempting to be found.
+	* 
+	* return - the index of where the item is found. Size of list if item not found.
+	*/
 	size_t find(const Item_Type& item);
 
+	/*
+	* Displays the list and the number of items. Used for proof of functions working correctly.
+	*/
 	void display();
 };
 
@@ -64,8 +124,8 @@ void SingleLinkedList<Item_Type>::pushBack(Item_Type item) {
 		Node* newNode = new Node(item);
 		tail->next = newNode;
 		tail = newNode;
+		numItems++;
 	}
-	numItems++;
 }
 
 template<typename Item_Type>
@@ -86,22 +146,26 @@ Item_Type SingleLinkedList<Item_Type>::popFront() {
 
 template<typename Item_Type>
 Item_Type SingleLinkedList<Item_Type>::popBack() {
-	//TODO
 	Item_Type returnItem = tail->data;
-	delete tail;
 	numItems--;
 
 	if (isEmpty()) {
+		delete head;
 		head = nullptr;
 		tail = nullptr;
 	}
 	else {
-		Node* tracker = head;
+		Node* curTracker = head;
+		Node* prevTracker = head;
 
-		while (tracker->next != nullptr) {
-			tracker = tracker->next;
+		while (curTracker->next != nullptr) {
+			prevTracker = curTracker;
+			curTracker = curTracker->next;
 		}
-		tail = tracker;
+
+		prevTracker->next = nullptr;
+		tail = prevTracker;
+		delete curTracker;
 	}
 
 	return returnItem;
@@ -133,6 +197,10 @@ void SingleLinkedList<Item_Type>::insert(size_t index, const Item_Type& item) {
 		index = numItems;
 	}
 
+	if (index < 0) {
+		index = 0;
+	}
+
 	if (isEmpty() || index == 0) {
 		pushFront(item);
 	}
@@ -143,15 +211,14 @@ void SingleLinkedList<Item_Type>::insert(size_t index, const Item_Type& item) {
 		Node* newNode = new Node(item);
 		Node* prevNode = head;
 
-		for (int i = 0; i < index; i++) {
+		for (int i = 0; i < index - 1; i++) {
 			prevNode = prevNode->next;
 		}
 
 		newNode->next = prevNode->next;
 		prevNode->next = newNode;
+		numItems++;
 	}
-
-	numItems++;
 }
 
 template<typename Item_Type>
@@ -181,6 +248,8 @@ bool SingleLinkedList<Item_Type>::remove(size_t index) {
 
 			prevPtr->next = pointerToDelete->next;
 			delete pointerToDelete;
+
+			numItems--;
 		}
 	}
 
@@ -210,18 +279,19 @@ void SingleLinkedList<Item_Type>::display() {
 	if (isEmpty()) {
 		std::cout << "The list is empty!" << std::endl;
 	}
+	else {
+		while (curPtr != nullptr) {
+			if (curPtr->next == nullptr) {
+				std::cout << curPtr->data;
+			}
+			else {
+				std::cout << curPtr->data << " -> ";
+			}
+			curPtr = curPtr->next;
+		}
 
-	while (curPtr != nullptr) {
-		if (curPtr->next == nullptr) {
-			std::cout << curPtr->data;
-		}
-		else {
-			std::cout << curPtr->data << " -> ";
-		}
-		curPtr = curPtr->next;
+		std::cout << " | Num items: " << numItems << std::endl;
 	}
-
-	std::cout << std::endl;
 }
 
 #endif //SINGLELINKEDLIST_HPP_
